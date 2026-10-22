@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тегиздиктердин параллелдүүлүгү</title>
+<style>
+:root{
+  --bg:#080e20;--panel:#111c35;--text:#f5f7ff;
+  --muted:#aab9d8;--cyan:#65e6ff;--purple:#b49aff;
+  --green:#75f0c1;--orange:#ffc887;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;background:radial-gradient(ellipse at 15% 15%,#182d54,transparent 45%),
+ radial-gradient(ellipse at 90% 90%,#27174b,transparent 40%),var(--bg);
+ color:var(--text);font-family:Arial,Helvetica,sans-serif;
+ min-height:100vh;display:flex;align-items:center;justify-content:center;
+ padding:18px;overflow-x:hidden
+}
+.presentation{width:min(1120px,100%)}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.logo{font-size:12px;font-weight:800;letter-spacing:2px;color:var(--cyan)}
+.counter{font-size:13px;color:var(--muted)}
+.stage{position:relative}
+.slide{
+ display:none;min-height:570px;position:relative;overflow:hidden;
+ background:linear-gradient(135deg,rgba(20,34,65,.97),rgba(10,17,36,.97));
+ border:1px solid rgba(151,188,255,.2);border-radius:26px;
+ padding:clamp(22px,4vw,48px);
+ box-shadow:0 25px 90px #0006;
+ animation:appear .45s ease
+}
+.slide.active{display:grid;grid-template-columns:1.05fr .95fr;gap:25px;align-items:center}
+.slide::before{content:"";position:absolute;width:350px;height:350px;right:-170px;top:-190px;border-radius:50%;background:#69eaff0c;pointer-events:none}
+@keyframes appear{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 7px #5de6ff55)}50%{filter:drop-shadow(0 0 20px #5de6ff99)}}
+@keyframes dash{to{stroke-dashoffset:-24}}
+.content,.visual{position:relative;z-index:1;min-width:0}
+.eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px}
+h1{font-size:clamp(32px,5vw,59px);line-height:1.06;letter-spacing:-1.8px;margin:0 0 22px}
+h2{font-size:clamp(26px,3.6vw,42px);line-height:1.12;letter-spacing:-1px;margin:0 0 22px}
+p{font-size:clamp(15px,1.7vw,18px);line-height:1.75;color:#d1dcf3;margin:0 0 15px}
+.highlight{color:var(--cyan);font-weight:800}
+.purple{color:var(--purple);font-weight:800}
+.tag{display:inline-flex;padding:9px 13px;border:1px solid #6ee8ff45;background:#55dfff0c;border-radius:100px;color:#b9f5ff;font-size:13px;margin:6px 5px 0 0}
+.visual{display:flex;justify-content:center;align-items:center;min-height:300px}
+.visual svg{width:100%;max-width:490px;height:auto;overflow:visible;animation:float 5s ease-in-out infinite}
+.card{padding:17px 18px;border:1px solid #8da8df2b;border-radius:17px;background:#ffffff06;margin:13px 0}
+.card strong{display:block;color:var(--green);margin-bottom:6px;font-size:16px}
+.card span{font-size:14px;line-height:1.6;color:#cbd7ef}
+.pill{display:inline-block;border-radius:10px;background:#8e7bff18;border:1px solid #b49aff55;padding:10px 14px;color:#d8ccff;font-weight:800;margin-top:7px}
+.nav{display:flex;align-items:center;gap:12px;margin-top:16px}
+button{cursor:pointer;border:1px solid #8297c744;background:#172542;color:white;border-radius:13px;padding:13px 18px;font-weight:700;font-size:14px;transition:.2s}
+button:hover{transform:translateY(-2px);border-color:var(--cyan);background:#1b3155}
+button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+button.primary{background:linear-gradient(120deg,#5be4ff,#a69aff);color:#071123;border:0}
+.progress{height:4px;background:#ffffff16;border-radius:8px;overflow:hidden;flex:1}
+.progress span{display:block;height:100%;width:11.11%;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .25s}
+.hint{color:#7184a9;font-size:12px;margin-left:auto}
+.big-number{font-size:80px;font-weight:900;line-height:1;color:#65e6ff;opacity:.9}
+.grid-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mini{padding:15px;border-radius:15px;background:#ffffff08;border:1px solid #ffffff13}
+.mini b{display:block;color:var(--cyan);font-size:14px;margin-bottom:6px}
+.mini span{font-size:13px;color:#c6d3ed;line-height:1.5}
+@media(max-width:720px){
+ body{padding:10px;align-items:flex-start}
+ .topbar{margin-top:4px}
+ .slide,.slide.active{grid-template-columns:1fr;gap:5px;min-height:0;padding:25px 20px}
+ .visual{min-height:210px;order:2}
+ .visual svg{max-width:330px;max-height:260px}
+ .content{order:1}
+ h1{font-size:38px}
+ h2{font-size:29px}
+ p{font-size:15px;line-height:1.65}
+ .nav{gap:7px;flex-wrap:wrap}
+ button{padding:12px 13px}
+ .hint{display:none}
+ .big-number{font-size:60px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="presentation">
+ <div class="topbar">
+  <div class="logo">GEOMETRY LAB / 3D</div>
+  <div class="counter" id="counter">01 / 09</div>
+ </div>
+
+ <main class="stage">
+
+ <!-- 1 -->
+ <section class="slide active">
+  <div class="content">
+   <div class="eyebrow">Геометрия • 01-бөлүм</div>
+   <h1>Тегиздиктердин <span class="highlight">параллелдүүлүгү</span></h1>
+   <p>Эки тегиздиктин мейкиндикте бири-бирине карата кандай жайгашарын үйрөнөбүз.</p>
+   <p>Бул тема архитектурада, курулушта жана күнүмдүк жашоодо кеңири колдонулат.</p>
+   <span class="tag">3D геометрия</span><span class="tag">9 слайд</span>
+  </div>
+  <div class="visual">
+   <svg viewBox="0 0 440 360" role="img" aria-label="Эки параллель тегиздиктин үч өлчөмдүү модели">
+    <defs>
+     <linearGradient id="p1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#5de8ff" stop-opacity=".7"/><stop offset="1" stop-color="#2785ff" stop-opacity=".18"/></linearGradient>
+     <linearGradient id="p2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b59aff" stop-opacity=".7"/><stop offset="1" stop-color="#7e4dff" stop-opacity=".18"/></linearGradient>
+     <marker id="arrow1" markerWidth="7" markerHeight="7" refX="4" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6Z" fill="#baf5ff"/></marker>
+    </defs>
+    <g animation="float">
+     <polygon points="40,125 235,45 400,100 205,182" fill="url(#p1)" stroke="#65e6ff" stroke-width="2"/>
+     <polygon points="40,125 205,182 400,100 235,45" fill="none" stroke="#65e6ff" stroke-opacity=".5"/>
+     <polygon points="40,245 235,165 400,220 205,302" fill="url(#p2)" stroke="#b49aff" stroke-width="2"/>
+     <path d="M40 245L205 302L400 220" fill="none" stroke="#b49aff" stroke-opacity=".6"/>
+     <path d="M145 155V205 M285 130V180" stroke="#e7faff" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#arrow1)"/>
+     <path d="M145 205V155 M285 180V130" stroke="#e7faff" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#arrow1)"/>
+     <text x="255" y="90" fill="white" font-size="24" font-style="italic">α</text>
+     <text x="255" y="245" fill="white" font-size="24" font-style="italic">β</text>
+    </g>
+    <circle cx="220" cy="175" r="145" fill="none" stroke="#65e6ff" stroke-opacity=".1" stroke-dasharray="4 9"/>
+   </svg>
+  </div>
+ </section>
+
+ <!-- 2 -->
+ <section class="slide">
+  <div class="content">
+   <div class="eyebrow">02 / Негизги түшүнүк</div>
+   <h2>Тегиздик деген эмне?</h2>
+   <p><span class="highlight">Тегиздик</span> — бардык багыттар боюнча чексиз созулган геометриялык бет.</p>
+   <p>Сүрөттө тегиздик төрт бурчтук түрүндө көрсөтүлөт. Бирок чындыгында ал бардык тарапка чексиз уланат.</p>
+   <div class="card"><strong>Мисал</strong><span>Столдун үстүн же китептин бетин тегиздиктин модели катары элестетүүгө болот.</span></div>
+  </div>
+  <div class="visual">
+   <svg viewBox="0 0 440 340" role="img" aria-label="Тегиздиктин модели">
+    <defs><linearGradient id="desk" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#69eaff" stop-opacity=".8"/><stop offset="1" stop-color="#6f8cff" stop-opacity=".18"/></linearGradient></defs>
+    <ellipse cx="225" cy="285" rx="175" ry="24" fill="#000" opacity=".25"/>
+    <path d="M90 190L260 110L380 150L210 230Z" fill="#9b704d" stroke="#e5b78c" stroke-width="3"/>
+    <path d="M110 193L110 250L130 258L130 202 M210 230V286L232 277V220 M350 163V221L370 212V154" fill="#835538" stroke="#c99569" stroke-width="2"/>
+    <path d="M45 125L215 45L410 110L240 190Z" fill="url(#desk)" stroke="#65e6ff" stroke-width="2"/>
+    <path d="M45 125L240 190L410 110" fill="none" stroke="#d2fbff" stroke-opacity=".65"/>
+    <text x="218" y="112" fill="white" font-size="26" font-style="italic">α</text>
+    <path d="M305 52Q340 25 365 48" fill="none" stroke="#b49aff" stroke-width="2" stroke-dasharray="5 5"/>
+    <text x="265" y="30" fill="#c7baff" font-size="14">Чексиз уланат</text>
+   </svg>
+  </div>
+ </section>
+
+ <!-- 3 -->
+ <section class="slide">
+  <div class="content">
+   <div class="eyebrow">03 / Аныктама</div>
+   <h2>Параллель тегиздиктер деген эмне?</h2>
+   <p>Эгер эки тегиздик бири-бири менен <span class="highlight">кесилишпесе</span>, алар параллель тегиздиктер деп аталат.</p>
+   <div class="card"><strong>Белгилениши</strong><span>α ∥ β — альфа тегиздиги бета тегиздигине параллель.</span></div>
+   <p>Мисал: бөлмөнүн полу менен шыпы бири-бирине параллель болот.</p>
+  </div>
+  <div class="visual">
+   <svg viewBox="0 0 440 350" role="img" aria-label="Параллель пол жана шып">
+    <path d="M50 70L220 20L390 75L220 130Z" fill="#65e6ff" fill-opacity=".2" stroke="#65e6ff" stroke-width="2"/>
+    <path d="M50 70V245L220 320L390 245V75" fill="#ffffff04" stroke="#8da8df" stroke-opacity=".5" stroke-width="2"/>
+    <path d="M50 245L220 190L390 245L220 320Z" fill="#b49aff" fill-opacity=".25" stroke="#b49aff" stroke-width="2"/>
+    <path d="M220 145V180" stroke="#fff" stroke-width="2" stroke-dasharray="4 5"/>
+    <path d="M220 135L214 147H226Z M220 190L214 178H226Z" fill="#fff"/>
+    <text x="225" y="61" fill="#bdf7ff" font-size="17">Шып</text>
+    <text x="230" y="286" fill="#dfd1ff" font-size="17">Пол</text>
+    <text x="300" y="110" fill="#d5faff" font-size="20">α</text>
+    <text x="300" y="255" fill="#e0d2ff" font-size="20">β</text>
+   </svg>
+  </div>
+ </section>
+
+ <!-- 4 -->
+ <section class="slide">
+  <div class="content">
+   <div class="eyebrow">04 / Белгиси</div>
+   <h2>Параллелдүүлүктүн белгиси</h2>
+   <p>Эгер бир тегиздикте жаткан эки кесилишкен түз сызык экинчи тегиздиктеги эки түз сызыкка тиешелүү түрдө параллель болсо, бул тегиздиктердин параллелдүүлүгүн аныктоого жардам берет.</p>
+   <div class="card"><strong>Негизги идея</strong><span>Эки тегиздиктин багыттарын түз сызыктар аркылуу салыштырабыз.</span></div>
+  </div>
+  <div class="visual">
+   <svg viewBox="0 0 440 350" role="img" aria-label="Тегиздиктердеги параллель түз сызыктар">
+    <polygon points="40,100 230,40 400,95 210,155" fill="#65e6ff" fill-opacity=".24" stroke="#65e6ff" stroke-width="2"/>
+    <polygon points="40,250 230,190 400,245 210,305" fill="#b49aff" fill-opacity=".22" stroke="#b49aff" stroke-width="2"/>
+    <path d="M95 102L295 83 M155 127L355 108" stroke="#d7fbff" stroke-width="3"/>
+    <path d="M95 252L295 233 M155 277L355 258" stroke="#e0d4ff" stroke-width="3"/>
+    <path d="M160 130V275 M300 110V255" stroke="#fff" stroke-width="1.5" stroke-dasharray="5 6" opacity=".7"/>
+    <text x="310" y="72" fill="white" font-size="20">α</text>
+    <text x="310" y="220" fill="white" font-size="20">β</text>
+    <text x="190" y="180" fill="#b9f7ff" font-size="14">Багыттар</text>
+   </svg>
+  </div>
+ </section>
+
+ <!-- 5 -->
+ <section class="slide">
+  <div class="content">
+   <div class="eyebrow">05 / Касиеттери</div>
+   <h2>Параллель тегиздиктердин касиеттери</h2>
+   <div class="card"><strong>01 — Кесилишпейт</strong><span>Параллель тегиздиктер бири-бири менен кесилишпейт.</span></div>
+   <div class="card"><strong>02 — Аралык туруктуу</strong><span>Алардын ортосундагы перпендикуляр аралык бардык жерде бирдей.</span></div>
+   <div class="card"><strong>03 — Багыты өзгөрбөйт</strong><span>Тегиздиктердин өз ара жайгашуусу туруктуу бойдон калат.</span></div>
+  </div>
+  <div class="visual">
+   <svg viewBox="0 0 440 350" role="img" aria-label="Параллель тегиздиктердин ортосундагы туруктуу аралык">
+    <polygon points="35,105 220,35 405,95 220,165" fill="#65e6ff" fill-opacity=".28" stroke="#65e6ff" stroke-width="2"/>
+    <polygon points="35,240 220,170 405,230 220,300" fill="#b49aff" fill-opacity=".3" stroke="#b49aff" stroke-width="2"/>
+    <path d="M220 145V193" stroke="#fff" stroke-width="2" stroke-dasharray="4 5"/>
+    <path d="M213 151L220 140L227 151 M213 187L220 198L227 187" fill="none" stroke="#fff" stroke-width="2"/>
+    <rect x="244" y="157" width="120" height="38" rx="12" fill="#102844" stroke="#65e6ff"/>
+    <text x="258" y="181" fill="#bdf7ff" font-size="17">d = const</text>
+    <text x="310" y="76" fill="#fff" font-size="22">α</text>
+    <text x="310" y="240" fill="#fff" font-size="22">β</text>
+   </svg>
+  </div>
+ </section>
+
+ <!-- 6 -->
+ <section class="slide">
+  <div class="content">
+   <div class="eyebrow">06 / Күнүмдүк жашоо</div>
+   <h2>Биз аларды кайдан көрөбүз?</h2>
+   <p>Параллель тегиздиктер күнүмдүк жашоодо көп кездешет.</p>
+   <div class="grid-cards">
+    <div class="mini"><b>Үйдө</b><span>Пол жана шып</span></div>
+    <div class="mini"><b>Мектепте</b><span>Китептин беттери</span></div>
+    <div class="mini"><b>Курулушта</b><span>Кабаттардын полдору</span></div>
+    <div class="mini"><b>Дизайнда</b><span>Текчелер жана панелдер</span></div>
+   </div>
+  </div>
+  <div class="visual">
+   <svg viewBox="0 0 440 350" role="img" aria-label="Кабаттары параллель жайгашкан заманбап имарат">
+    <defs><linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#70e8ff" stop-opacity=".65"/><stop offset="1" stop-color="#6d85ff" stop-opacity=".2"/></linearGradient></defs>
+    <path d="M95 95L235 40L365 83L225 140Z" fill="#65e6ff" fill-opacity=".22" stroke="#65e6ff" stroke-width="2"/>
+    <path d="M95 95V265L225 320V140 M225 140L365 83V255L225 320" fill="url(#glass)" stroke="#8edfff" stroke-width="2"/>
+    <path d="M95 150L225 205L365 148 M95 205L225 260L365 203 M95 260L225 315L365 258" fill="none" stroke="#ffc887" stroke-width="5"/>
+    <path d="M120 116V258 M145 126V270 M250 149V292 M275 139V282 M320 120V272" stroke="#b4d9ff" stroke-width="2" opacity=".6"/>
+    <circle cx="337" cy="43" r="20" fill="#ffc887" fill-opacity=".15" stroke="#ffc887" stroke-opacity=".5"/>
+    <path d="M25 310L75 290L105 302L55 323Z" fill="#b49aff" fill-opacity=".5"/>
+   </svg>
+  </div>
+ </section>
+
+ <!-- 7 -->
+ <section class="slide">
+  <div class="content">
+   <div class="eyebrow">07 / Практика</div>
+   <h2>Кантип аныктайбыз?</h2>
+   <p>Эки тегиздиктин параллель экенин аныктоо үчүн алардын кесилишерин же кесилишпесин карайбыз.</p>
+   <div class="card"><strong>1-кадам</strong><span>Эки тегиздикти белгилеп алабыз: α жана β.</span></div>
+   <div class="card"><strong>2-кадам</strong><span>Алардын жалпы чекити же кесилишүү сызыгы бар-жогун текшеребиз.</span></div>
+   <div class="card"><strong>3-кадам</strong><span>Эгер алар кесилишпесе, параллель тегиздиктер деп эсептейбиз.</span></div>
+  </div>
+  <div class="visual">
+   <svg viewBox="0 0 440 350" role="img" aria-label="Параллель тегиздиктерди аныктоо">
+    <polygon points="35,95 220,30 405,90 220,155" fill="#65e6ff" fill-opacity=".25" stroke="#65e6ff" stroke-width="2"/>
+    <polygon points="35,230 220,165 405,225 220,290" fill="#b49aff" fill-opacity=".25" stroke="#b49aff" stroke-width="2"/>
+    <text x="330" y="72" fill="white" font-size="22">α</text>
+    <text x="330" y="208" fill="white" font-size="22">β</text>
+    <circle cx="220" cy="161" r="28" fill="#0b1830" stroke="#75f0c1" stroke-width="2"/>
+    <path d="M207 161L216 170L234 150" fill="none" stroke="#75f0c1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="112" y="330" fill="#75f0c1" font-size="15">Кесилишүү жок ✓</text>
+   </svg>
+  </div>
+ </section>
+
+ <!-- 8 -->
+ <section class="slide">
+  <div class="content">
+   <div class="eyebrow">08 / Мааниси</div>
+   <h2>Бул тема эмне үчүн маанилүү?</h2>
+   <p>Тегиздиктердин параллелдүүлүгүн билүү геометриялык маселелерди чечүүгө жана мейкиндикти туура түшүнүүгө жардам берет.</p>
+   <div class="card"><strong>Архитектура</strong><span>Имараттын кабаттарын жана шыптарын туура жайгаштыруу.</span></div>
+   <div class="card"><strong>Инженерия</strong><span>Тетиктерди жана конструкцияларды так долбоорлоо.</span></div>
+   <div class="card"><strong>Күнүмдүк турмуш</strong><span>Текчелерди, панелдерди жана башка беттерди туура орнотуу.</span></div>
+  </div>
+  <div class="visual">
+   <svg viewBox="0 0 440 350" role="img" aria-label="Архитектурадагы параллель беттер">
+    <path d="M45 285L180 220L180 70L45 130Z" fill="#152b4b" stroke="#65e6ff" stroke-width="2"/>
+    <path d="M180 220L375 270L375 110L180 70Z" fill="#1b3456" stroke="#65e6ff" stroke-width="2"/>
+    <path d="M45 130L180 170L375 110L240 70Z" fill="#65e6ff" fill-opacity=".35" stroke="#8beaff" stroke-width="2"/>
+    <path d="M45 180L180 220L375 160 M45 230L180 270L375 210" fill="none" stroke="#ffc887" stroke-width="5"/>
+    <path d="M65 155L160 190 M65 205L160 240 M205 190L350 150 M205 240L350 200" stroke="#8edfff" stroke-width="2" opacity=".8"/>
+    <path d="M95 100L235 40L390 85" fill="none" stroke="#b49aff" stroke-width="2" stroke-dasharray="5 6"/>
+    <circle cx="340" cy="50" r="17" fill="#ffc887" fill-opacity=".8"/>
+   </svg>
+  </div>
+ </section>
+
+ <!-- 9 -->
+ <section class="slide">
+  <div class="content">
+   <div class="eyebrow">09 / Жыйынтык</div>
+   <h2>Эсте сакта!</h2>
+   <div class="card"><strong>✓ Аныктама</strong><span>Параллель тегиздиктер бири-бири менен кесилишпейт.</span></div>
+   <div class="card"><strong>✓ Белгилениши</strong><span>α ∥ β — эки тегиздиктин параллелдүүлүгү.</span></div>
+   <div class="card"><strong>✓ Касиети</strong><span>Алардын ортосундагы перпендикуляр аралык туруктуу.</span></div>
+   <p class="highlight">Геометрия — мейкиндикти түшүнүүнүн ачкычы!</p>
+   <span class="tag">Көңүл бурганыңарга рахмат!</span>
+  </div>
+  <div class="visual">
+   <svg viewBox="0 0 440 350" role="img" aria-label="Эки параллель тегиздиктин жыйынтык сүрөтү">
+    <circle cx="220" cy="170" r="145" fill="none" stroke="#65e6ff" stroke-opacity=".12" stroke-dasharray="4 8"/>
+    <circle cx="220" cy="170" r="110" fill="none" stroke="#b49aff" stroke-opacity=".17"/>
+    <polygon points="35,115 220,40 405,100 220,175" fill="#65e6ff" fill-opacity=".3" stroke="#65e6ff" stroke-width="2"/>
+    <polygon points="35,235 220,160 405,220 220,295" fill="#b49aff" fill-opacity=".3" stroke="#b49aff" stroke-width="2"/>
+    <path d="M220 145V183" stroke="#fff" stroke-width="2" stroke-dasharray="4 5"/>
+    <path d="M213 151L220 140L227 151 M213 177L220 188L227 177" fill="none" stroke="#fff" stroke-width="2"/>
+    <text x="230" y="85" fill="#c3f8ff" font-size="26" font-style="italic">α</text>
+    <text x="230" y="245" fill="#e0d2ff" font-size="26" font-style="italic">β</text>
+    <text x="140" y="330" fill="#75f0c1" font-size="15">α ∥ β</text>
+   </svg>
+  </div>
+ </section>
+
+ </main>
+
+ <div class="nav">
+  <button id="prev" onclick="move(-1)">← Артка</button>
+  <div class="progress"><span id="bar"></span></div>
+  <button class="primary" id="next" onclick="move(1)">Кийинки →</button>
+  <button onclick="toggleFull()">⛶</button>
+  <span class="hint">← → баскычтары менен да башкарсаң болот</span>
+ </div>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const counter=document.getElementById('counter');
+const bar=document.getElementById('bar');
+const prev=document.getElementById('prev');
+const next=document.getElementById('next');
+let current=0;
+
+function showSlide(n){
+ current=Math.max(0,Math.min(n,slides.length-1));
+ slides.forEach((s,i)=>s.classList.toggle('active',i===current));
+ counter.textContent=String(current+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+ bar.style.width=((current+1)/slides.length*100)+'%';
+ prev.disabled=current===0;
+ prev.style.opacity=current===0?'.45':'1';
+ next.textContent=current===slides.length-1?'Башынан ↻':'Кийинки →';
+}
+function move(step){
+ if(current===slides.length-1&&step===1){showSlide(0);return}
+ showSlide(current+step);
+}
+async function toggleFull(){
+ try{
+  if(!document.fullscreenElement) await document.documentElement.requestFullscreen();
+  else await document.exitFullscreen();
+ }catch(e){alert('Толук экран режими бул браузерде жеткиликсиз болушу мүмкүн.');}
+}
+document.addEventListener('keydown',e=>{
+ if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();move(1)}
+ if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();move(-1)}
+ if(e.key==='Home')showSlide(0);
+ if(e.key==='End')showSlide(slides.length-1);
+});
+let touchX=0;
+document.querySelector('.stage').addEventListener('touchstart',e=>{
+ touchX=e.changedTouches[0].screenX;
+},{passive:true});
+document.querySelector('.stage').addEventListener('touchend',e=>{
+ const diff=e.changedTouches[0].screenX-touchX;
+ if(Math.abs(diff)>60)move(diff<0?1:-1);
+},{passive:true});
+showSlide(0);
+</script>
+</body>
+</html>
